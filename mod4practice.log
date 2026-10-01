@@ -1,0 +1,66 @@
+mysql> INSERT INTO Console (ConsoleName, Manufacturer, ReleaseYear)
+    -> VALUES ('Nintendo 64', 'Nintendo', 1996);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> 
+mysql> SELECT * FROM Console;
++-----------+----------------+--------------+-------------+
+| ConsoleID | ConsoleName    | Manufacturer | ReleaseYear |
++-----------+----------------+--------------+-------------+
+|         1 | Super Nintendo | Nintendo     |        1991 |
+|         2 | Sega Genesis   | Sega         |        1989 |
+|         3 | PlayStation    | Sony         |        1994 |
+|         4 | Nintendo 64    | Nintendo     |        1996 |
+|         5 | Sega Dreamcast | Sega         |        1999 |
+|         6 | Nintendo 64    | Nintendo     |        1996 |
++-----------+----------------+--------------+-------------+
+6 rows in set (0.00 sec)
+
+mysql> UPDATE Game
+    -> SET Price = 35.00
+    -> WHERE GameID = 2;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> 
+mysql> SELECT * FROM Game WHERE GameID = 2;
++--------+---------------+------------+-------+-----------+
+| GameID | Title         | Genre      | Price | ConsoleID |
++--------+---------------+------------+-------+-----------+
+|      2 | Super Metroid | Platformer | 35.00 |         1 |
++--------+---------------+------------+-------+-----------+
+1 row in set (0.00 sec)
+
+mysql> DELETE FROM Game
+    -> WHERE Title = 'Street Fighter II';
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`retro_replay`.`TradeIn`, CONSTRAINT `TradeIn_ibfk_1` FOREIGN KEY (`GameID`) REFERENCES `Game` (`GameID`))
+mysql> INSERT INTO TradeIn (GameID, CustomerName, TradeInDate, CreditAmount)
+    -> VALUES (2, 'Test Customer', '2026-09-24', 10.00);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> 
+mysql> SELECT * FROM TradeIn WHERE CustomerName = 'Test Customer';
++-----------+--------+---------------+-------------+--------------+
+| TradeInID | GameID | CustomerName  | TradeInDate | CreditAmount |
++-----------+--------+---------------+-------------+--------------+
+|         4 |      2 | Test Customer | 2026-09-24  |        10.00 |
++-----------+--------+---------------+-------------+--------------+
+1 row in set (0.00 sec)
+
+mysql> UPDATE Game
+    -> SET Price = Price - 5.00
+    -> WHERE Genre = 'RPG';
+Query OK, 2 rows affected (0.01 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> 
+mysql> SELECT * FROM Game WHERE Genre = 'RPG';
++--------+-------------------+-------+-------+-----------+
+| GameID | Title             | Genre | Price | ConsoleID |
++--------+-------------------+-------+-------+-----------+
+|      1 | Chrono Trigger    | RPG   | 35.00 |         1 |
+|      6 | Final Fantasy VII | RPG   | 45.00 |         3 |
++--------+-------------------+-------+-------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> notee;
