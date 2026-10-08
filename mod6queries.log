@@ -1,0 +1,225 @@
+mysql> source Module6_setup.sql;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Database changed
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+
+Query OK, 0 rows affected (0.06 sec)
+
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> USE fitness_studio;
+Database changed
+mysql> USE fitness_studio;
+Database changed
+mysql> SHOW TABLES;
++--------------------------+
+| Tables_in_fitness_studio |
++--------------------------+
+| Class                    |
+| Member                   |
++--------------------------+
+2 rows in set (0.00 sec)
+
+mysql> Class
+    -> Member
+    -> 
+    -> DELIMITER $$
+    -> 
+    -> CREATE FUNCTION MemberTier(Attended INT)
+    -> RETURNS VARCHAR(10)
+    -> DETERMINISTIC
+    -> BEGIN
+    ->     DECLARE Tier VARCHAR(10);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Class
+Member
+
+DELIMITER $$
+CREATE FUNCTION MemberTier(Attended INT)
+RETURNS VARC' at line 1
+mysql> 
+mysql>     IF Attended >= 30 THEN
+    ->         SET Tier = 'Gold';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IF Attended >= 30 THEN
+        SET Tier = 'Gold'' at line 1
+mysql>     ELSEIF Attended >= 10 THEN
+    ->         SET Tier = 'Silver';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ELSEIF Attended >= 10 THEN
+        SET Tier = 'Silver'' at line 1
+mysql>     ELSE
+    ->         SET Tier = 'Bronze';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ELSE
+        SET Tier = 'Bronze'' at line 1
+mysql>     END IF;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'END IF' at line 1
+mysql> 
+mysql>     RETURN Tier;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'RETURN Tier' at line 1
+mysql> END $$
+    -> 
+    -> DELIMITER ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'END $$
+
+DELIMITER' at line 1
+mysql> SELECT FirstName, LastName, ClassesAttended,
+    ->        MemberTier(ClassesAttended) AS Tier
+    -> FROM Member;
+ERROR 1305 (42000): FUNCTION fitness_studio.MemberTier does not exist
+mysql> SELECT FirstName, LastName, ClassesAttended,
+    ->        MemberTier(ClassesAttended) AS Tier
+    -> FROM Member;
+ERROR 1305 (42000): FUNCTION fitness_studio.MemberTier does not exist
+mysql> ^C
+mysql> USE fitness_studio;
+Database changed
+mysql> DELIMITER $$
+mysql> 
+mysql> CREATE FUNCTION MemberTier(Attended INT)
+    -> RETURNS VARCHAR(10)
+    -> DETERMINISTIC
+    -> BEGIN
+    ->     DECLARE Tier VARCHAR(10);
+    -> 
+    ->     IF Attended >= 30 THEN
+    ->         SET Tier = 'Gold';
+    ->     ELSEIF Attended >= 10 THEN
+    ->         SET Tier = 'Silver';
+    ->     ELSE
+    ->         SET Tier = 'Bronze';
+    ->     END IF;
+    -> 
+    ->     RETURN Tier;
+    -> END$$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> DELIMITER ;
+mysql> SELECT FirstName, LastName, ClassesAttended,
+    ->        MemberTier(ClassesAttended) AS Tier
+    -> FROM Member;
++-----------+----------+-----------------+--------+
+| FirstName | LastName | ClassesAttended | Tier   |
++-----------+----------+-----------------+--------+
+| Kayla     | Ortiz    |              32 | Gold   |
+| Dana      | Petrov   |               8 | Bronze |
+| Miguel    | Alvarez  |               2 | Bronze |
++-----------+----------+-----------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> DELIMITER $$
+mysql> 
+mysql> CREATE PROCEDURE SignUpForClass(
+    ->     IN p_MemberID INT,
+    ->     IN p_ClassID INT
+    -> )
+    -> BEGIN
+    ->     UPDATE Member
+    ->     SET ClassesAttended = ClassesAttended + 1
+    ->     WHERE MemberID = p_MemberID;
+    -> 
+    ->     SELECT CONCAT(
+    ->         FirstName, ' ', LastName,
+    ->         ' signed up for class ID ', p_ClassID
+    ->     ) AS Confirmation
+    ->     FROM Member
+    ->     WHERE MemberID = p_MemberID;
+    -> END$$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> DELIMITER ;
+mysql> CALL SignUpForClass(2, 2);
++--------------------------------------+
+| Confirmation                         |
++--------------------------------------+
+| Dana Petrov signed up for class ID 2 |
++--------------------------------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT FirstName, LastName, ClassesAttended
+    -> FROM Member
+    -> WHERE MemberID = 2;
++-----------+----------+-----------------+
+| FirstName | LastName | ClassesAttended |
++-----------+----------+-----------------+
+| Dana      | Petrov   |               9 |
++-----------+----------+-----------------+
+1 row in set (0.00 sec)
+
+mysql> CALL SignUpForClass(1, 1);
++--------------------------------------+
+| Confirmation                         |
++--------------------------------------+
+| Kayla Ortiz signed up for class ID 1 |
++--------------------------------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CALL SignUpForClass(3, 3);
++-----------------------------------------+
+| Confirmation                            |
++-----------------------------------------+
+| Miguel Alvarez signed up for class ID 3 |
++-----------------------------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT FirstName, LastName, ClassesAttended,
+    ->        MemberTier(ClassesAttended) AS Tier
+    -> FROM Member;
++-----------+----------+-----------------+--------+
+| FirstName | LastName | ClassesAttended | Tier   |
++-----------+----------+-----------------+--------+
+| Kayla     | Ortiz    |              33 | Gold   |
+| Dana      | Petrov   |               9 | Bronze |
+| Miguel    | Alvarez  |               3 | Bronze |
++-----------+----------+-----------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> CALL SignUpForClass(1, 1);
++--------------------------------------+
+| Confirmation                         |
++--------------------------------------+
+| Kayla Ortiz signed up for class ID 1 |
++--------------------------------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CALL SignUpForClass(3, 3);
++-----------------------------------------+
+| Confirmation                            |
++-----------------------------------------+
+| Miguel Alvarez signed up for class ID 3 |
++-----------------------------------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT FirstName, LastName, ClassesAttended,
+    ->        MemberTier(ClassesAttended) AS Tier
+    -> FROM Member;
++-----------+----------+-----------------+--------+
+| FirstName | LastName | ClassesAttended | Tier   |
++-----------+----------+-----------------+--------+
+| Kayla     | Ortiz    |              34 | Gold   |
+| Dana      | Petrov   |               9 | Bronze |
+| Miguel    | Alvarez  |               4 | Bronze |
++-----------+----------+-----------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> notee;
