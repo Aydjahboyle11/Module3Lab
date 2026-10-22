@@ -1,3 +1,4 @@
+
 DROP DATABASE IF EXISTS foghorn;
 CREATE DATABASE foghorn;
 USE foghorn;
@@ -6,17 +7,17 @@ DROP TABLE IF EXISTS SupportTicket;
 DROP TABLE IF EXISTS Customer;
 
 CREATE TABLE Customer (
-CustomerID INT AUTO_INCREMENT PRIMARY KEY,
-CustomerName VARCHAR(100),
-Email VARCHAR(100)
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerName VARCHAR(100),
+    Email VARCHAR(100)
 );
 
 CREATE TABLE SupportTicket (
-TicketID INT AUTO_INCREMENT PRIMARY KEY,
-CustomerID INT,
-Subject VARCHAR(150),
-Status VARCHAR(20),
-FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+    TicketID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerID INT,
+    Subject VARCHAR(150),
+    Status VARCHAR(20),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 INSERT INTO Customer (CustomerName, Email) VALUES
